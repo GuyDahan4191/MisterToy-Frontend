@@ -1,4 +1,16 @@
-import { httpService } from './http.service.js'
+import { httpService } from './http.service.local.js'
+
+const KEY = 'toys_db'
+
+const labels = [
+	'On wheels',
+	'Box game',
+	'Art',
+	'Baby',
+	'Doll',
+	'Puzzle',
+	'Outdoor',
+]
 
 export const toyService = {
 	query,

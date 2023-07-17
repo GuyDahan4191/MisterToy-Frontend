@@ -3,7 +3,7 @@
 export const utilService = {
     makeId,
     makeLorem,
-    getRandomIntInclusive,
+    getRandomIntInc,
     loadFromStorage,
     saveToStorage,
     animateCSS,
@@ -33,7 +33,7 @@ function makeLorem(size = 100) {
     return txt
 }
 
-function getRandomIntInclusive(min, max) {
+function getRandomIntInc(min, max) {
     min = Math.ceil(min)
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
@@ -83,13 +83,13 @@ function debounce(fn, wait) {
 
 // throttle() calls a function at intervals of a specified time
 // while the user is carrying out an event
-function throttle(fn, wait){
+function throttle(fn, wait) {
     let throttled = false
-    return function(...args){
-        if(!throttled){
-            fn.apply(this,args)
+    return function (...args) {
+        if (!throttled) {
+            fn.apply(this, args)
             throttled = true
-            setTimeout(()=>{
+            setTimeout(() => {
                 throttled = false
             }, wait)
         }

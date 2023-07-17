@@ -64,10 +64,10 @@ function getEmptyToy() {
 
 
 function _createToys() {
-    let toys = utilService.loadFromStorage(KEY)
+    let toys = utilService.loadFromStorage(TOY_KEY)
     if (!toys || !toys.length) {
         toys = [_createToy('Superman', utilService.getRandomIntInc(20, 100)), _createToy('Batman', utilService.getRandomIntInc(20, 150)), _createToy('Ironman', utilService.getRandomIntInc(20, 100))]
-        utilService.saveToStorage(KEY, toys)
+        utilService.saveToStorage(TOY_KEY, toys)
     }
     return toys
 }
