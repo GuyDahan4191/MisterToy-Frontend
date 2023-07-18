@@ -3,82 +3,85 @@ import { toyService } from '../services/toy.service.local.js'
 export const toyStore = {
     state: {
         toys: null,
-        // todosCount: null,
-        // currTodo: null,
-        // filterBy: {
-        //   txt: '',
-        //   status: '',
-        //   pageIdx: 0,
-        //   pageSize: 5,
-        // },
-        // sortBy: {
-        //   by: '',
-        //   desc: 1,
-        // },
-    },
-    getters: {
-        // todo({ currTodo }) {
-        //   return currTodo
-        // },
-        // donePct({ todos }) {
-        //   if (!todos || !todos.length) return 0
-        //   const dones = todos.reduce(
-        //     (acc, todo) => (todo.isDone ? acc + 1 : acc),
-        //     0
-        //   )
-        //   const total = todos.length
-
-        //   return ((dones / total) * 100).toFixed(2)
-        // },
-        toys({ toys }) {
-            return toys
+        filterBy: {
+            name: '',
+            status: '',
+            labels: [],
+            sortBy: '',
+            isDescending: 1
         },
-        // todosToDisplay() {
-        //   if (!todos) return null
-
-        //   const { status, txt, pageIdx, pageSize } = filterBy
-        //   let filteredTodos = todos
-
-        //   const regex = new RegExp(txt, 'i')
-        //   filteredTodos = filteredTodos.filter((todo) => regex.test(todo.txt))
-
-        //   if (status) {
-        //     filteredTodos = filteredTodos.filter(
-        //       (todo) =>
-        //         (todo.isDone && status === 'done') ||
-        //         (!todo.isDone && status === 'active')
-        //     )
-        //   }
-
-        //   const startIdx = pageIdx * pageSize
-        //   filteredTodos = filteredTodos.slice(startIdx, startIdx + pageSize)
-
-        //   return filteredTodos
-        // },
     },
+
+    getters: {
+        toys({ filterBy, toys }) {
+            if (!toys) return null
+
+            //filter
+            const { name, status, labels } = filterBy
+            let filteredToys = toys
+
+            const regex = new RegExp(name, 'i')
+            filteredToys = filteredToys.filter((toy) => regex.test(toy.name))
+
+            if (status) {
+                filteredToys = filteredToys.filter(
+                    (toy) =>
+                        (toy.inStock && status === 'inStock') ||
+                        (!toy.inStock && status === 'outOfStock') ||
+                        (status === 'all')
+                )
+            }
+
+            if (labels.length > 0) {
+                filteredToys = filteredToys.filter((toy) =>
+                    labels.some((label) => toy.labels.some((toyLabel) => toyLabel.title === label))
+                )
+            }
+
+            // Sort
+            let prop = filterBy.sortBy;
+            const sortBy = {
+                [prop]: filterBy.isDescending
+            };
+
+            if (filterBy.sortBy === 'price') {
+                filteredToys.sort((t1, t2) => (t1.price - t2.price) * sortBy.price)
+            } else if (filterBy.sortBy === 'name') {
+                filteredToys.sort((t1, t2) => {
+                    if (t1.name > t2.name) return 1 * filterBy.isDescending;
+                    if (t2.name > t1.name) return -1 * filterBy.isDescending;
+                    return 0;
+                });
+            }
+
+            return filteredToys
+        },
+    },
+
     mutations: {
         setToys(state, { toys }) {
             state.toys = toys
+        },
+
+        saveToy(state, { toy }) {
+            state.toys.push(toy)
         },
 
         removeToy(state, { toyId }) {
             const idx = state.toys.findIndex((toy) => toy._id === toyId)
             state.toys.splice(idx, 1)
         },
-        // setFilterBy(state, { filterBy }) {
-        //   state.filterBy = filterBy
-        // },
-        // setCurrTodo(state, { todo }) {
-        //   state.currTodo = todo
-        // },
-        // addTodo(state, { todo }) {
-        //   state.todos.unshift(todo)
-        // },
-        // updateTodo(state, { todo }) {
-        //   const idx = state.todos.findIndex((t) => t._id === todo._id)
-        //   state.todos.splice(idx, 1, todo)
-        // },
+
+        setFilterBy(state, { filterBy }) {
+            state.filterBy = filterBy
+        },
+
+        updateToy(state, { toy }) {
+            const idx = state.toys.findIndex((t) => t._id === toy._id)
+            state.toys.splice(idx, 1, toy)
+        },
     },
+
     actions: {
         loadToys(context) {
             toyService
@@ -90,6 +93,16 @@ export const toyStore = {
                     throw err
                 })
         },
+        // loadToys({ commit }, { filterBy, sortBy }) {
+        //     if (!filterBy) filterBy = { name: '', status: '', labels: null }
+        //     if (!sortBy) sortBy = {}
+
+        //     toyService.query(filterBy, sortBy).then(toys => {
+        //         commit({ type: 'setToys', toys })
+        //         const labels = toyService.getLabels()
+        //         commit({ type: 'setLabels', labels })
+        //     })
+        // },
 
         removeToy({ commit }, { toyId }) {
             return toyService.remove(toyId)
@@ -98,36 +111,16 @@ export const toyStore = {
                     console.log(err)
                     return Promise.reject()
                 })
-        }
+        },
 
-        //   saveTodo({ commit, dispatch }, { todo }) {
-        //     const actionType = todo._id ? 'updateTodo' : 'addTodo'
-        //     return todoService.save(todo).then((savedTodo) => {
-        //       commit({ type: actionType, todo: savedTodo })
-        //       let txt = actionType === 'addTodo' ? 'Added a todo' : 'Updated todo'
-        //       txt += `: ${savedTodo.txt}`
-        //       const activity = { txt, at: Date.now() }
-        //       dispatch({ type: 'addActivity', activity })
-        //       return savedTodo
-        //     })
-        //   },
-
-        //   },
-        //   getById({ commit }, { todoId }) {
-        //     return todoService.getById(todoId).then((todo) => {
-        //       commit({ type: 'setCurrTodo', todo })
-        //       return todo
-        //     })
-        //   },
-        // },
-        // loadTodos({ commit }, { filterBy }) {
-        //   todoService
-        //     .query(filterBy)
-        //     .then(todos => commit({ type: 'setTodos', todos }))
-        //     .catch(err => {
-        //       throw err
-        //     })
-        // },
-    }
+        saveToy({ commit }, { toy }) {
+            const actionType = toy._id ? 'updateToy' : 'addToy'
+            return toyService.save(toy)
+                .then((savedToy) => {
+                    commit({ type: actionType, toy: savedToy })
+                    return savedToy
+                })
+        },
+    },
 }
 

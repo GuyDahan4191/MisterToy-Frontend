@@ -43,30 +43,15 @@ function getEmptyToy() {
     }
 }
 
-// function _createToys() {
-//     let toys = utilService.loadFromStorage(TOY_KEY)
-//     if (!toys || !toys.length) {
-//         toys = []
-//         toys.push(_createToy('audu', 300))
-//         toys.push(_createToy('fiak', 120))
-//         toys.push(_createToy('subali', 100))
-//         toys.push(_createToy('mitsu', 150))
-//         utilService.saveToStorage(TOY_KEY, toys)
-//     }
-// }
-
-// function _createToy(vendor, speed = 250) {
-//     const toy = getEmptyToy(vendor, speed)
-//     toy._id = utilService.makeId()
-//     return toy
-// }
-
-
-
 function _createToys() {
     let toys = utilService.loadFromStorage(TOY_KEY)
     if (!toys || !toys.length) {
-        toys = [_createToy('Superman', utilService.getRandomIntInc(20, 100)), _createToy('Batman', utilService.getRandomIntInc(20, 150)), _createToy('Ironman', utilService.getRandomIntInc(20, 100))]
+        toys = [
+            _createToy('Superman', utilService.getRandomIntInc(20, 100)),
+            _createToy('Batman', utilService.getRandomIntInc(20, 150)),
+            _createToy('Ironman', utilService.getRandomIntInc(20, 100)),
+            _createToy('Thor', utilService.getRandomIntInc(20, 100))
+        ]
         utilService.saveToStorage(TOY_KEY, toys)
     }
     return toys

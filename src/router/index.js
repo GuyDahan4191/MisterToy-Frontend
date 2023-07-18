@@ -1,14 +1,16 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
-import ToyIndex from '../views/ToyIndex.vue'
-import ToyEdit from '../views/ToyEdit.vue'
+import HomeView from '../pages/HomeView.vue'
+import AboutView from '../pages/AboutView.vue'
+import ToyIndex from '../pages/ToyIndex.vue'
+import ToyEdit from '../pages/ToyEdit.vue'
+import ToyDetails from '../pages/ToyDetails.vue'
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView
     },
     {
@@ -20,19 +22,18 @@ const router = createRouter({
       path: '/toy',
       name: 'ToyIndex',
       component: ToyIndex,
-      children: [
-        {
-          path: 'edit/:toyId?',
-          name: 'ToyEdit',
-          component: ToyEdit,
-        },
-        // {
-        //   path: 'details/:toyId',
-        //   name: 'toy-details',
-        //   component: ToyDetails,
-        // },
-      ],
     },
+    {
+      path: '/toy/edit/:toyId?',
+      name: 'ToyEdit',
+      component: ToyEdit,
+    },
+    {
+      path: '/toy/:toyId',
+      name: 'ToyDetails',
+      component: ToyDetails,
+    },
+
   ]
 })
 
